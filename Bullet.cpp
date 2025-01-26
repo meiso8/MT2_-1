@@ -23,11 +23,11 @@ void Bullet::Init() {
     worldMatrix_ = { 0.0f };
 }
 
-bool Bullet::isHitLineY(float& lineY) {
+bool Bullet::isHitLineY(float& lineY) const {
     return (worldPos_.y <= radius_ + lineY) ? true : false;
 }
 
-bool Bullet::isHitLineX(float& lineX) {
+bool Bullet::isHitLineX(float& lineX) const {
     return (worldPos_.x <= radius_ + lineX) ? true : false;
 }
 

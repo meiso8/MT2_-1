@@ -3,6 +3,8 @@
 #include"Camera.h"
 #define ENEMY_MAX 10
 
+class Particle;
+
 class Enemy :public Character {
 private:
     Vector2 screenPos_ = { 0.0f };     // スクリーン座標
@@ -17,9 +19,11 @@ private:
     bool isAir_ = true;//空気アリ
     static int frame_;
     float k_ = 0.6f;//空気抵抗係数
+    Particle* particle[5];
 public:
 
     Enemy();
+    ~Enemy();
     void Init();
 
     void Update(bool& isMoon, Vector2& linePos, int& score, const Vector2& kGravity, float& miu);

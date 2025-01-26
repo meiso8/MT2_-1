@@ -1,53 +1,38 @@
 #include"Particle.h"
-#include"Camera.h"
 #include"Enemy.h"
+#include"CommonHeader.h"
 
-const int Particle::startFrame_ = 0;
-const int Particle::endFrame_ = 30;
+int Particle::coolTime_ = 0;
 
 Particle::Particle() {
-    Init();
-}
 
-Particle::~Particle() {
-    delete camera_;
-    delete enemy_;
-}
-
-void Particle::Init() {
-
-    isShot_ = false;
-    radius_ = enemy_->GetRadius();
     worldPos_ = { 0.0f };
     screenPos_ = { 0.0f };
     worldMatrix_ = { 0.0f };
-    frame_ = 0;
+    radius_ = 0.0f;
 }
 
-void Particle::Update() {
+void Particle::Init(float& radius, Vector2& pos) {
 
-    frame_++;
+    radius_ = radius;
+    worldPos_ = pos;
+    coolTime_ = 10;
+}
 
-    if (frame_ % 2 == 0) {
+void Particle::Update(float& radius, Vector2& pos) {
 
-        if (!isShot_) {
-
-            isShot_ = true;
-            worldPos_ = enemy_->GetPos();
-        }
+    if (coolTime_ > 0) {
+        coolTime_--;
+    } else {
+        Init(radius, pos);
     }
 
-    if (isShot_) {
+}
 
-        if (frame_ < endFrame_) {
-            isShot_ = false;
-            frame_ = startFrame_;
-        }
-
-    }
+void Particle::Transform(Camera* camera) {
 
     worldMatrix_ = MakeAffineMatrix(Vector2(1.0f, 1.0f), 0.0f, worldPos_);
-    screenPos_ = camera_->TransformScreenPos(Vector2(0.0f, 0.0f), worldMatrix_);
+    screenPos_ = camera->TransformScreenPos(Vector2(0.0f, 0.0f), worldMatrix_);
 
 }
 
@@ -59,7 +44,8 @@ void Particle::Draw() {
         static_cast<int>(radius_),
         static_cast<int>(radius_),
         0.0f,
-        WHITE,
+        GREEN - 160,
         kFillModeSolid
     );
+
 }
