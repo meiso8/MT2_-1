@@ -1,26 +1,21 @@
 #pragma once
 #include"Vector2.h"
 #include"Matrix3x3.h"
+#include"Camera.h"
 
-class Camera;
-class Enemy;
+#define PARTICLE_MAX 5
 
 class Particle {
 private:
-    bool isShot_ = false;
     float radius_;
     Vector2 worldPos_;
     Vector2 screenPos_;
     Matrix3x3 worldMatrix_;
-    static int frame_;
-    static const int startFrame_;
-    static const int endFrame_;
-    Camera* camera_;
-    Enemy* enemy_;
+    static int coolTime_;
 public:
     Particle();
-    ~Particle();
-    void Init();
-    void Update();
+    void Init(float& radius, Vector2& pos);
+    void Update(float& radius, Vector2& pos);
+    void Transform(Camera* camera);
     void Draw();
 };

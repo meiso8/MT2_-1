@@ -22,8 +22,8 @@ public:
     void Transform(Camera* camera);
     void Update(float& gravity, Vector2& linePos);
     void CoolTimer(Vector2 playerPos);
-    bool isHitLineY(float& lineY);
-    bool isHitLineX(float& lineX);
+    bool isHitLineY(float& lineY) const;
+    bool isHitLineX(float& lineX) const;
 
     void Draw();
 

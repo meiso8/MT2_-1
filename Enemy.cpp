@@ -2,6 +2,7 @@
 #include"Length.h"
 #include"Normalize.h"
 #include"CommonHeader.h"
+#include"Particle.h"
 
 int Enemy::frame_ = 0;
 
@@ -16,6 +17,18 @@ bool Enemy::isHitLineX(float& lineX) {
 Enemy::Enemy() {
     isAlive_ = false;
     Init();
+
+    for (int i = 0; i < PARTICLE_MAX; ++i) {
+        particle[i] = new Particle();
+    }
+}
+
+Enemy::~Enemy() {
+
+    for (int i = 0; i < PARTICLE_MAX; ++i) {
+        delete particle[i];
+    }
+
 }
 
 void Enemy::Init() {
@@ -45,9 +58,6 @@ void Enemy::Init() {
 }
 
 void Enemy::Update(bool& isMoon, Vector2& linePos, int& score, const Vector2& kGravity, float& miu) {
-
-    //  5. あんこの軌跡を描画する(8)
-    //     a.数フレーム前までの軌跡とすること。端から軌跡を描くと見づらすぎる
 
     if (isAlive_) {
 
@@ -120,9 +130,11 @@ void Enemy::Update(bool& isMoon, Vector2& linePos, int& score, const Vector2& kG
 
         if (isHit_) {
             isAlive_ = false; // 生存フラグを偽にする
-            color_ = GREEN;
+            color_ = GREEN - 128;
             score += 10; // スコアを増やす
         }
+
+
 
     } else {
 
@@ -133,19 +145,43 @@ void Enemy::Update(bool& isMoon, Vector2& linePos, int& score, const Vector2& kG
         if (reactionTimer_ >= 0) {
             reactionTimer_--;
         } else {
+
             Init();
         }
 
     }
 
+    // -----------------------------------
+    // パーティクルの処理
+    // -----------------------------------
+
+    for (int i = 0; i < PARTICLE_MAX; ++i) {
+        particle[i]->Update(radius_, worldPos_);
+    }
+
 }
 
 void Enemy::Transform(Camera* camera) {
+
     worldMatrix_ = MakeAffineMatrix(Vector2(1.0f, 1.0f), 0.0f, worldPos_);
     screenPos_ = camera->TransformScreenPos(Vector2(0.0f, 0.0f), worldMatrix_);
+
+
+    for (int i = 0; i < PARTICLE_MAX; ++i) {
+        particle[i]->Transform(camera);
+    }
 }
 
 void Enemy::Draw() {
+
+
+    if (isAlive_) {
+
+        for (int i = 0; i < PARTICLE_MAX; ++i) {
+            particle[i]->Draw();
+        }
+
+    }
 
     if (reactionTimer_ % 2 == 0) {
         Novice::DrawEllipse(static_cast<int>(screenPos_.x),
